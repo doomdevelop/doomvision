@@ -1,0 +1,43 @@
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+app/bin/
+app/gen/
+barebone/bin/
+barebone/gen/
+library/bin/
+library/gen/
+test-app/bin/
+test-app/gen/
+
+# Local configuration file (sdk path, etc)
+barebone/local.properties
+library/local.properties
+#eclipse files
+#.classpath
+#.project
+
+# OSX files
+.DS_Store
+*.iml
+.idea/
+build/
+.gradle/
+app/build/
+library/build/
+local.properties
+atlassian-ide-plugin.xml
+
+# Transifex generated files
+transifex/tx-android/android/
+transifex/tx-android/ios/
+*.sublime-project
+*.sublime-workspace
