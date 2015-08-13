@@ -2,4 +2,6 @@
     <string name="app_name">DoomVision</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="btn_search">Search</string>
+    <string name="search_field">search images, vectors and videos .... </string>
 </resources>
