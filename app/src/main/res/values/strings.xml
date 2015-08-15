@@ -4,4 +4,6 @@
     <string name="action_settings">Settings</string>
     <string name="btn_search">Search</string>
     <string name="search_field">search images, vectors and videos .... </string>
+    <string name="client_id">8f80cdd74ddbef680339</string>
+    <string name="client_secret">d1cc912295e23669be555fcadb02b4442b53be9e</string>
 </resources>
