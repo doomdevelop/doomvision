@@ -1,14 +1,14 @@
 package com.akozlowski.doomvision.service;
 
-import com.akozlowski.doomvision.pojo.Response;
+import com.akozlowski.doomvision.pojo.EchoTest;
 
-import retrofit.Callback;
 import retrofit.http.GET;
+import retrofit.http.Query;
 
 /**
  * Created by akozlowski on 15/08/15.
  */
 public interface TestService {
     @GET("/test")
-    void test(Callback<Response> cb);
+    EchoTest test(@Query("test") String testText);
 }

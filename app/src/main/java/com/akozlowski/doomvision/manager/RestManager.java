@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Base64;
 
 import com.akozlowski.doomvision.R;
+import com.akozlowski.doomvision.pojo.EchoTest;
 import com.akozlowski.doomvision.pojo.Response;
 import com.akozlowski.doomvision.service.SearchImageService;
 import com.akozlowski.doomvision.service.ServiceGenerator;
@@ -26,13 +27,18 @@ public class RestManager {
     private RestAdapter restAdapter;
     private String clientID;
     private String clientSecret;
+    private String authBase64;
 
-    //"https://${client_id}:${client_secret}@api.shutterstock.com/v2"
-    //https://8f80cdd74ddbef680339:d1cc912295e23669be555fcadb02b4442b53be9e@api.shutterstock.com/v2/images/search?query=donkey
     public RestManager(Context context) {
         this.context = context;
         this.clientID = context.getString(R.string.client_id);
         this.clientSecret = context.getString(R.string.client_secret);
+        this.authBase64 = getAuthBase64();
+    }
+
+    public RestManager(Context context, String authBase64) {
+        this.context = context;
+        this.authBase64 = authBase64;
     }
 
     private void createRestAdapter() {
@@ -51,20 +57,17 @@ public class RestManager {
     }
 
     private String getEndPoint() {
-        //https://api.shutterstock.com/v2/images/search?license=commercial&&&&&&&&&&query=dog&&sort=popular&view=minimal
         return "https://api.shutterstock.com/v2";
-//        return "https://" + clientID + ":" + clientSecret + "@api.shutterstock.com/v2";
     }
 
     public void searchImage(String query, Callback<Response> cb) {
-//        SearchImageService service = restAdapter.create(SearchImageService.class);
-        SearchImageService service = ServiceGenerator.createService(SearchImageService.class, getEndPoint(), getAuthBase64());
+        SearchImageService service = ServiceGenerator.createService(SearchImageService.class, getEndPoint(), authBase64);
         service.search(query, cb);
     }
 
-    public void test(Callback<Response> cb) {
+    public EchoTest test(String testText) {
         TestService service = ServiceGenerator.createService(TestService.class, getEndPoint(), getAuthBase64());
-        service.test(cb);
+        return service.test(testText);
     }
 
     public void validate(String id, String tag1, String tag2, Callback<Response> cb) {

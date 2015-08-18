@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="getting_started_circle_indicator_fill_color">#FFFFFF</color>
+    <color name="getting_started_circle_indicator_page_color">#74aace</color>
+    <color name="getting_started_circle_indicator_stroke_color">#FFDDDDDD</color>
+</resources>
