@@ -7,4 +7,40 @@
     <string name="client_id">8f80cdd74ddbef680339</string>
     <string name="client_secret">d1cc912295e23669be555fcadb02b4442b53be9e</string>
     <string name='no_internet_msg'>No internet connection</string>
+    <string name='image_type'>image type</string>
+    <string name='license'>license</string>
+    <string name='safe'>safe</string>
+    <string name='sort'>sort</string>
+    <string name='view'>view</string>
+    <string name='btn_ok'>ok</string>
+    <string name='btn_cancel'>cancel</string>
+    <string name='search_setting'>search setting</string>
+    <string name="data_description">description:</string>
+    <string name="data_added_date">added Date:</string>
+    <string name="data_categories">categories:</string>
+    <string name="data_empty">---</string>
+    <string name="data_image_type">image type:</string>
+
+    <string-array name="image_type_array">
+        <item>photo</item>
+        <item>ilustration</item>
+        <item>vector</item>
+    </string-array>
+
+    <string-array name="license_array">
+        <item>comercial</item>
+        <item>editorial</item>
+        <item>enhanced</item>
+    </string-array>
+
+    <string-array name="sort_array">
+        <item>popular</item>
+        <item>newest</item>
+        <item>relevance</item>
+        <item>random</item>
+    </string-array>
+    <string-array name="view_array">
+        <item>minimal</item>
+        <item>full</item>
+    </string-array>
 </resources>

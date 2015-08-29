@@ -8,12 +8,12 @@
     <application
         android:name=".DoomVisionApplication"
         android:allowBackup="true"
-        android:configChanges="keyboardHidden|orientation|screenSize"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

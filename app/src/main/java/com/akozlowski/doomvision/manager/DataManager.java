@@ -9,6 +9,25 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class DataManager {
+    private static DataManager instance;
+
+    private DataManager() {
+    }
+
+    public static DataManager getInstance() {
+        if (instance == null)
+            throw (new IllegalStateException("BrushingStateManager not initialized"));
+        return (instance);
+    }
+
+    public static DataManager createInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        instance = new DataManager();
+        return instance;
+    }
+
     public void setResponse(Response response) {
         this.response = response;
     }

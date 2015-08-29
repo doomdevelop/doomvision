@@ -4,22 +4,107 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:orientation="vertical">-->
+
+
     <android.support.v4.view.ViewPager
         android:id="@+id/gallery_image_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="0dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
+        android:layout_weight="1"
         android:orientation="vertical" />
 
     <LinearLayout
         android:id="@+id/gallery_image_indicator_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal" />
+    <!--</LinearLayout>-->
+
+    <RelativeLayout
+        android:id="@+id/gallery_details_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/details_description_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/data_description" />
+
+        <TextView
+            android:id="@+id/details_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/details_description_label"
+            android:gravity="right" />
+
+        <TextView
+            android:id="@+id/details_added_date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/details_description_label"
+            android:text="@string/data_added_date" />
+
+        <TextView
+            android:id="@+id/details_added_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/details_description"
+            android:gravity="right" />
+
+        <TextView
+            android:id="@+id/details_image_type_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/details_added_date_label"
+            android:text="@string/data_image_type" />
+
+        <TextView
+            android:id="@+id/details_image_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/details_added_date"
+            android:gravity="right" />
+
+        <TextView
+            android:id="@+id/details_categories_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/details_image_type_label"
+            android:text="@string/data_categories" />
+
+        <TextView
+            android:id="@+id/details_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/details_image_type"
+            android:gravity="right" />
+    </RelativeLayout>
 </LinearLayout>

@@ -2,6 +2,8 @@ package com.akozlowski.doomvision.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +31,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import roboguice.RoboGuice;
@@ -55,8 +55,6 @@ public class GalleryFragmentPortrait extends RoboFragment {
     private List<Item> items = new ArrayList<Item>();
     @InjectView(R.id.search_progress)
     private ProgressBar progressBar;
-    @Inject
-    private DataManager dataManager;
 
 
     public GalleryFragmentPortrait() {
@@ -79,8 +77,8 @@ public class GalleryFragmentPortrait extends RoboFragment {
         super.onResume();
         restManager = new RestManager(getActivity());
         createListView();
-        if (dataManager.getResponse() != null) {
-            createItems(dataManager.getResponse());
+        if (DataManager.getInstance().getResponse() != null) {
+            createItems(DataManager.getInstance().getResponse());
         }
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,10 +98,13 @@ public class GalleryFragmentPortrait extends RoboFragment {
     private void createItems(Response response) {
         List<Data> dataList = response.getData();
         items.clear();
-        dataManager.setResponse(response);
+        DataManager.getInstance().setResponse(response);
+
+        int index = 0;
         for (Data data : dataList) {
-            items.add(new ImageItem(data.getAssets().getPreview().getUrl()));
+            items.add(new ImageItem(data.getAssets().getPreview().getUrl(), index));
             printCategories(data.getCategories());
+            index++;
         }
         ((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
     }
@@ -129,11 +130,13 @@ public class GalleryFragmentPortrait extends RoboFragment {
     }
 
     private class ImageItem implements Item {
-        private String url;
+        final private String url;
+        final private int index;
 
-        public ImageItem(String url) {
+        public ImageItem(String url, int index) {
             DebugLog.d(TAG + " create Item url: " + url);
             this.url = url;
+            this.index = index;
 
         }
 
@@ -152,32 +155,48 @@ public class GalleryFragmentPortrait extends RoboFragment {
             }
             viewItemHolder = (ViewItemHolder) convertView.getTag();
             Picasso.with(getActivity()).load(url).into(viewItemHolder.imageView);
+            viewItemHolder.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DebugLog.d(TAG + " onClick index " + index);
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = fm.beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(GalleryFragmentLandscape.PAGE_INDEX_KEY, index);
+                    GalleryFragmentLandscape galleryFragmentLandscape = new GalleryFragmentLandscape();
+                    galleryFragmentLandscape.setArguments(bundle);
+                    transaction.replace(R.id.fragment_container, galleryFragmentLandscape, GalleryFragmentLandscape.class.getSimpleName()).addToBackStack(null).commit();
+                }
+            });
             return convertView;
         }
     }
 
     private void search() {
-        if (searchEditText.getText() != null && searchEditText.getText().length() > 0) {
-            restManager.searchImage(searchEditText.getText().toString(), new Callback<Response>() {
-                @Override
-                public void success(Response response, retrofit.client.Response response2) {
-                    DebugLog.d(TAG + " responce: " + response.toString());
+        restManager.searchImage(searchEditText.getText().toString(), new Callback<Response>() {
+            @Override
+            public void success(Response response, retrofit.client.Response response2) {
+                DebugLog.d(TAG + " responce: " + response.toString());
+                if (response != null && response.getData() != null && response.getData().size() > 0) {
+                    ((MainActivity) getActivity()).changeRequestedOrientation(true);
+                } else {
+                    ((MainActivity) getActivity()).changeRequestedOrientation(false);
+                }
+                createItems(response);
+                progressBar.setVisibility(View.GONE);
+            }
 
-                    createItems(response);
+            @Override
+            public void failure(RetrofitError error) {
+                DebugLog.d(TAG + " error: " + error.toString() + ", " + error.getUrl() + ", ");
+                if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
+                    searchBtn.setEnabled(false);
                     progressBar.setVisibility(View.GONE);
+                    onNoInternetConnection();
                 }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    DebugLog.d(TAG + " error: " + error.toString() + ", " + error.getUrl() + ", ");
-                    if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
-                        searchBtn.setEnabled(false);
-                        progressBar.setVisibility(View.GONE);
-                        onNoInternetConnection();
-                    }
-                }
-            });
-        }
+            }
+        });
+//        }
     }
 
     private void onNoInternetConnection() {

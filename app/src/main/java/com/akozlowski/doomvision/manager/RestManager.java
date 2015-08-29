@@ -62,7 +62,7 @@ public class RestManager {
 
     public void searchImage(String query, Callback<Response> cb) {
         SearchImageService service = ServiceGenerator.createService(SearchImageService.class, getEndPoint(), authBase64);
-        service.search(query, cb);
+        service.search(query, "full", cb);
     }
 
     public EchoTest test(String testText) {

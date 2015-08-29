@@ -2,6 +2,7 @@ package com.akozlowski.doomvision;
 
 import android.app.Application;
 
+import com.akozlowski.doomvision.manager.DataManager;
 import com.akozlowski.doomvision.service.InternetConnectivityReceiver;
 import com.akozlowski.doomvision.util.DebugLog;
 
@@ -13,6 +14,7 @@ public class DoomVisionApplication extends Application {
     public void onCreate() {
         super.onCreate();
         DebugLog.d("DoomVisionApplication onCreate()");
+        DataManager.createInstance();
         InternetConnectivityReceiver.createInstance(this);
     }
 }
