@@ -31,7 +31,6 @@
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal" />
-    <!--</LinearLayout>-->
 
     <RelativeLayout
         android:id="@+id/gallery_details_layout"
@@ -45,26 +44,22 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/details_description_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="@string/data_description" />
-
-        <TextView
             android:id="@+id/details_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/details_description_label"
-            android:gravity="right" />
+            android:layout_alignParentLeft="true"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"
+            android:gravity="center_horizontal"
+             />
 
         <TextView
             android:id="@+id/details_added_date_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/details_description_label"
+            android:layout_below="@+id/details_description"
             android:text="@string/data_added_date" />
 
         <TextView
