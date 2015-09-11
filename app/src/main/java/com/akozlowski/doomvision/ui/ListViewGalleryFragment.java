@@ -182,11 +182,14 @@ private void search() {
 
         @Override
         public void onError(Throwable e) {
-            DebugLog.d(TAG + " error: " + e.toString() + ", " + e.getMessage() + ", ");
+            if(e != null && e.getMessage() != null) {
+                DebugLog.d(TAG + " error: " + e.toString() + ", " + e.getMessage() + ", ");
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
 //            if (e.getKind().equals(RetrofitError.Kind.NETWORK)) {
-//                searchBtn.setEnabled(false);
-//                progressBar.setVisibility(View.GONE);
-//                onNoInternetConnection();
+                searchBtn.setEnabled(false);
+                progressBar.setVisibility(View.GONE);
+                onNoInternetConnection();
 //            }
         }
 
