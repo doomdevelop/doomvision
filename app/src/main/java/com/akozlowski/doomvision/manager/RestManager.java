@@ -7,6 +7,7 @@ import com.akozlowski.doomvision.R;
 import com.akozlowski.doomvision.pojo.EchoTest;
 import com.akozlowski.doomvision.pojo.Response;
 import com.akozlowski.doomvision.service.SearchImageService;
+import com.akozlowski.doomvision.service.SearchImageServiceRx;
 import com.akozlowski.doomvision.service.ServiceGenerator;
 import com.akozlowski.doomvision.service.TestService;
 import com.akozlowski.doomvision.service.ValidateService;
@@ -14,6 +15,7 @@ import com.akozlowski.doomvision.util.DebugLog;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
+import rx.Observable;
 
 /**
  * Created by akozlowski on 14/08/15.
@@ -63,6 +65,11 @@ public class RestManager {
     public void searchImage(String query, Callback<Response> cb) {
         SearchImageService service = ServiceGenerator.createService(SearchImageService.class, getEndPoint(), authBase64);
         service.search(query, "full", cb);
+    }
+
+    public Observable<Response> searchImage(String query) {
+        SearchImageServiceRx service = ServiceGenerator.createService(SearchImageServiceRx.class, getEndPoint(), authBase64);
+        return service.search(query, "full");
     }
 
     public EchoTest test(String testText) {

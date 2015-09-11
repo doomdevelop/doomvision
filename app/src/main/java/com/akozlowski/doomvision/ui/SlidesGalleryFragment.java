@@ -26,9 +26,9 @@ import roboguice.inject.InjectView;
 /**
  * Created by akozlowski on 17/08/15.
  */
-public class GalleryFragmentLandscape extends RoboFragment {
-    private static final String TAG = GalleryFragmentLandscape.class.getSimpleName();
-    @InjectView(R.id.gallery_image_view_pager)
+public class SlidesGalleryFragment extends RoboFragment {
+    private static final String TAG = SlidesGalleryFragment.class.getSimpleName();
+    @InjectView(R.id.gallery_view_pager)
     private ViewPager viewPager;
     private List<roboguice.fragment.RoboFragment> slides = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public class GalleryFragmentLandscape extends RoboFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.gallery_fragment_landscape, container, false);
+        return inflater.inflate(R.layout.slides_gallery_fragment, container, false);
     }
 
     @Override

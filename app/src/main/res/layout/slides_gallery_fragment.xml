@@ -12,7 +12,7 @@
 
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/gallery_image_view_pager"
+        android:id="@+id/gallery_view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="20dp"

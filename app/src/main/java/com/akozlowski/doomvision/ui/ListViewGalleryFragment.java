@@ -31,18 +31,19 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
 import roboguice.RoboGuice;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class GalleryFragmentPortrait extends RoboFragment {
-    private static final String TAG = GalleryFragmentPortrait.class.getSimpleName();
+public class ListViewGalleryFragment extends RoboFragment {
+    private static final String TAG = ListViewGalleryFragment.class.getSimpleName();
     private RestManager restManager;
     @InjectView(R.id.response)
     private TextView responseTextView;
@@ -57,13 +58,13 @@ public class GalleryFragmentPortrait extends RoboFragment {
     private ProgressBar progressBar;
 
 
-    public GalleryFragmentPortrait() {
+    public ListViewGalleryFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.gallery_fragment_portrait, container, false);
+        return inflater.inflate(R.layout.list_view_gallery_fragment, container, false);
     }
 
     @Override
@@ -162,43 +163,48 @@ public class GalleryFragmentPortrait extends RoboFragment {
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     FragmentTransaction transaction = fm.beginTransaction();
                     Bundle bundle = new Bundle();
-                    bundle.putInt(GalleryFragmentLandscape.PAGE_INDEX_KEY, index);
-                    GalleryFragmentLandscape galleryFragmentLandscape = new GalleryFragmentLandscape();
-                    galleryFragmentLandscape.setArguments(bundle);
-                    transaction.replace(R.id.fragment_container, galleryFragmentLandscape, GalleryFragmentLandscape.class.getSimpleName()).addToBackStack(null).commit();
+                    bundle.putInt(SlidesGalleryFragment.PAGE_INDEX_KEY, index);
+                    SlidesGalleryFragment slidesGalleryFragment = new SlidesGalleryFragment();
+                    slidesGalleryFragment.setArguments(bundle);
+                    transaction.replace(R.id.fragment_container, slidesGalleryFragment, SlidesGalleryFragment.class.getSimpleName()).addToBackStack(null).commit();
                 }
             });
             return convertView;
         }
     }
 
-    private void search() {
-        restManager.searchImage(searchEditText.getText().toString(), new Callback<Response>() {
-            @Override
-            public void success(Response response, retrofit.client.Response response2) {
-                DebugLog.d(TAG + " responce: " + response.toString());
-                if (response != null && response.getData() != null && response.getData().size() > 0) {
-                    ((MainActivity) getActivity()).changeRequestedOrientation(true);
-                } else {
-                    ((MainActivity) getActivity()).changeRequestedOrientation(false);
-                }
-                createItems(response);
-                progressBar.setVisibility(View.GONE);
-            }
+private void search() {
+    restManager.searchImage(searchEditText.getText().toString()).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response>() {
+        @Override
+        public void onCompleted() {
 
-            @Override
-            public void failure(RetrofitError error) {
-                DebugLog.d(TAG + " error: " + error.toString() + ", " + error.getUrl() + ", ");
-                if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
-                    searchBtn.setEnabled(false);
-                    progressBar.setVisibility(View.GONE);
-                    onNoInternetConnection();
-                }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            DebugLog.d(TAG + " error: " + e.toString() + ", " + e.getMessage() + ", ");
+//            if (e.getKind().equals(RetrofitError.Kind.NETWORK)) {
+//                searchBtn.setEnabled(false);
+//                progressBar.setVisibility(View.GONE);
+//                onNoInternetConnection();
+//            }
+        }
+
+        @Override
+        public void onNext(Response response) {
+            DebugLog.d(TAG + " responce: " + response.toString());
+            if (response != null && response.getData() != null && response.getData().size() > 0) {
+                ((MainActivity) getActivity()).changeRequestedOrientation(true);
+            } else {
+                ((MainActivity) getActivity()).changeRequestedOrientation(false);
             }
-        });
+            createItems(response);
+            progressBar.setVisibility(View.GONE);
+        }
+    });
+
 //        }
-    }
-
+}
     private void onNoInternetConnection() {
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.no_internet_msg), Toast.LENGTH_LONG);
         InternetConnectivityReceiver.getInstance().registerConnectivityReceiver(new InternetConnectivityReceiver.InternetConnectivityListener() {

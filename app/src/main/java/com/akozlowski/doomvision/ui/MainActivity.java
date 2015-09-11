@@ -67,14 +67,14 @@ public class MainActivity extends FragmentActivity implements RoboContext {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (savedInstanceState == null) {
             DebugLog.d(TAG + " onCreate()..savedInstanceState is null");
-            transaction.replace(R.id.fragment_container, new GalleryFragmentPortrait()).addToBackStack(null).commit();
+            transaction.replace(R.id.fragment_container, new ListViewGalleryFragment()).addToBackStack(null).commit();
         } else {
             if (getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                 DebugLog.d(TAG + " SCREEN_ORIENTATION_PORTRAIT");
-                changeFragment(new GalleryFragmentPortrait(), GalleryFragmentPortrait.class.getSimpleName());
+                changeFragment(new ListViewGalleryFragment(), ListViewGalleryFragment.class.getSimpleName());
             } else {
                 DebugLog.d(TAG + " SCREEN_ORIENTATION_LANDSCAPE");
-                changeFragment(new GalleryFragmentLandscape(), GalleryFragmentLandscape.class.getSimpleName());
+                changeFragment(new SlidesGalleryFragment(), SlidesGalleryFragment.class.getSimpleName());
             }
         }
     }
