@@ -24,6 +24,7 @@ import com.akozlowski.doomvision.pojo.Data;
 import com.akozlowski.doomvision.pojo.Response;
 import com.akozlowski.doomvision.service.InternetConnectivityReceiver;
 import com.akozlowski.doomvision.ui.listView.CustomAdapter;
+import com.akozlowski.doomvision.ui.listView.ImageItem;
 import com.akozlowski.doomvision.ui.listView.Item;
 import com.akozlowski.doomvision.util.DebugLog;
 import com.squareup.picasso.Picasso;
@@ -31,6 +32,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
 import roboguice.RoboGuice;
 import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
@@ -40,7 +43,7 @@ import rx.schedulers.Schedulers;
 
 
 /**
- * A placeholder fragment containing a simple view.
+ * A placeholder fragment containing a simple listView.
  */
 public class ListViewGalleryFragment extends RoboFragment {
     private static final String TAG = ListViewGalleryFragment.class.getSimpleName();
@@ -84,11 +87,19 @@ public class ListViewGalleryFragment extends RoboFragment {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideKeyboard();
-                progressBar.setVisibility(View.VISIBLE);
-                search();
+              onStartSearch();
             }
         });
+    }
+
+    private void onStartSearch(){
+        hideKeyboard();
+        progressBar.setVisibility(View.VISIBLE);
+        searchRx();
+    }
+
+    public ListView getListView() {
+        return listView;
     }
 
     private void createListView() {
@@ -103,7 +114,7 @@ public class ListViewGalleryFragment extends RoboFragment {
 
         int index = 0;
         for (Data data : dataList) {
-            items.add(new ImageItem(data.getAssets().getPreview().getUrl(), index));
+            items.add(new ImageItem(getActivity(),data.getAssets().getPreview().getUrl(), index));
             printCategories(data.getCategories());
             index++;
         }
@@ -122,98 +133,79 @@ public class ListViewGalleryFragment extends RoboFragment {
         getView().invalidate();
     }
 
-    private static class ViewItemHolder {
-        ViewItemHolder(ImageView imageView) {
-            this.imageView = imageView;
-        }
 
-        public final ImageView imageView;
-    }
 
-    private class ImageItem implements Item {
-        final private String url;
-        final private int index;
 
-        public ImageItem(String url, int index) {
-            DebugLog.d(TAG + " create Item url: " + url);
-            this.url = url;
-            this.index = index;
+    /**
+     * search via retrofit in background using RxAndroid
+     */
+    private void searchRx() {
+        restManager.searchImage(searchEditText.getText().toString()).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response>() {
+            @Override
+            public void onCompleted() {
 
-        }
-
-        @Override
-        public int getViewType() {
-            return Item.ItemType.values().length;
-        }
-
-        @Override
-        public View getView(LayoutInflater inflater, View convertView, ViewGroup parent) {
-            ViewItemHolder viewItemHolder;
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.image_item, parent, false);
-                viewItemHolder = new ViewItemHolder((ImageView) convertView.findViewById(R.id.image));
-                convertView.setTag(viewItemHolder);
             }
-            viewItemHolder = (ViewItemHolder) convertView.getTag();
-            Picasso.with(getActivity()).load(url).into(viewItemHolder.imageView);
-            viewItemHolder.imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DebugLog.d(TAG + " onClick index " + index);
-                    FragmentManager fm = getActivity().getSupportFragmentManager();
-                    FragmentTransaction transaction = fm.beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(SlidesGalleryFragment.PAGE_INDEX_KEY, index);
-                    SlidesGalleryFragment slidesGalleryFragment = new SlidesGalleryFragment();
-                    slidesGalleryFragment.setArguments(bundle);
-                    transaction.replace(R.id.fragment_container, slidesGalleryFragment, SlidesGalleryFragment.class.getSimpleName()).addToBackStack(null).commit();
+
+            @Override
+            public void onError(Throwable e) {
+                if (e != null && e.getMessage() != null) {
+                    DebugLog.d(TAG + " error: " + e.toString() + ", " + e.getMessage() + ", ");
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });
-            return convertView;
-        }
-    }
-
-private void search() {
-    restManager.searchImage(searchEditText.getText().toString()).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response>() {
-        @Override
-        public void onCompleted() {
-
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            if(e != null && e.getMessage() != null) {
-                DebugLog.d(TAG + " error: " + e.toString() + ", " + e.getMessage() + ", ");
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-//            if (e.getKind().equals(RetrofitError.Kind.NETWORK)) {
                 searchBtn.setEnabled(false);
                 progressBar.setVisibility(View.GONE);
                 onNoInternetConnection();
-//            }
-        }
-
-        @Override
-        public void onNext(Response response) {
-            DebugLog.d(TAG + " responce: " + response.toString());
-            if (response != null && response.getData() != null && response.getData().size() > 0) {
-                ((MainActivity) getActivity()).changeRequestedOrientation(true);
-            } else {
-                ((MainActivity) getActivity()).changeRequestedOrientation(false);
             }
-            createItems(response);
-            progressBar.setVisibility(View.GONE);
-        }
-    });
 
-//        }
-}
+            @Override
+            public void onNext(Response response) {
+                DebugLog.d(TAG + " responce: " + response.toString());
+                if (response != null && response.getData() != null && response.getData().size() > 0) {
+                    ((MainActivity) getActivity()).changeRequestedOrientation(true);
+                } else {
+                    ((MainActivity) getActivity()).changeRequestedOrientation(false);
+                }
+                createItems(response);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    /**
+     * search using retrofit calls in background
+     */
+    private void search() {
+        restManager.searchImage(searchEditText.getText().toString(), new Callback<Response>() {
+            @Override
+            public void success(Response response, retrofit.client.Response response2) {
+                DebugLog.d(TAG + " responce: " + response.toString());
+                if (response != null && response.getData() != null && response.getData().size() > 0) {
+                    ((MainActivity) getActivity()).changeRequestedOrientation(true);
+                } else {
+                    ((MainActivity) getActivity()).changeRequestedOrientation(false);
+                }
+                createItems(response);
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                DebugLog.d(TAG + " error: " + error.toString() + ", " + error.getUrl() + ", ");
+                if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
+                    searchBtn.setEnabled(false);
+                    progressBar.setVisibility(View.GONE);
+                    onNoInternetConnection();
+                }
+            }
+        });
+    }
     private void onNoInternetConnection() {
         Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.no_internet_msg), Toast.LENGTH_LONG);
         InternetConnectivityReceiver.getInstance().registerConnectivityReceiver(new InternetConnectivityReceiver.InternetConnectivityListener() {
             @Override
             public void onInternetConnectivityCallback() {
                 searchBtn.setEnabled(true);
+                onStartSearch();
             }
         });
     }
