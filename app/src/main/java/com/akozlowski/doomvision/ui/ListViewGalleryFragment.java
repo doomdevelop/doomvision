@@ -115,16 +115,9 @@ public class ListViewGalleryFragment extends RoboFragment {
         int index = 0;
         for (Data data : dataList) {
             items.add(new ImageItem(getActivity(),data.getAssets().getPreview().getUrl(), index));
-            printCategories(data.getCategories());
             index++;
         }
         ((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
-    }
-
-    private void printCategories(List<Category> categories) {
-        for (Category category : categories) {
-            DebugLog.d(TAG + " cat: " + category.getName());
-        }
     }
 
     private void hideKeyboard() {

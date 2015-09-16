@@ -4,7 +4,9 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 
 /**
+ * Generate RestAdapter for giving url as endpoint and Authorization
  * Created by akozlowski on 14/08/15.
+ *
  */
 public class ServiceGenerator {
     public static <S> S createService(Class<S> serviceClass, String baseUrl, final String auth) {

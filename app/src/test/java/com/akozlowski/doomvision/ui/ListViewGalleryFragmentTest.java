@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,sdk = 21)
-public class ListViewGalleryFragmentTest extends TestCase {
+public class ListViewGalleryFragmentTest  {
 
     @Mock
     Base64 base64;
@@ -48,14 +48,13 @@ public class ListViewGalleryFragmentTest extends TestCase {
     Response response;
     FragmentActivity activity;
 
-    public void setUp() throws Exception {
-        super.setUp();
-        activity = Robolectric.setupActivity(MainActivity.class);
-    }
+
 
     @Test
     public void testFragment(){
+        activity = Robolectric.setupActivity(MainActivity.class);
         response = DataCreator.generateResponse();
+        Assert.assertNotNull(activity);
         Assert.assertNotNull(response);
         DataManager.getInstance().setResponse(response);
         Assert.assertNotNull(DataManager.getInstance().getResponse());
@@ -72,6 +71,8 @@ public class ListViewGalleryFragmentTest extends TestCase {
     @Test
     public void testListView(){
         int index = 0;
+        activity = Robolectric.setupActivity(MainActivity.class);
+        Assert.assertNotNull(activity);
         List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
         assertNotNull(fragments);
         assertTrue(fragments.size() > 0);
